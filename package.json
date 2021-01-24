@@ -1,0 +1,58 @@
+{
+  "name": "kleinanzeigen-magic",
+  "version": "0.0.1",
+  "description": "Kleinanzeigen Magic App",
+  "productName": "Kleinanzeigen Magic",
+  "author": "exislow+github@gmail.com",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue ./",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.0.0",
+    "@ungap/custom-elements-builtin": "^0.6.3",
+    "axios": "^0.18.1",
+    "core-js": "^3.6.5",
+    "electron-context-menu": "^2.3.0",
+    "electron-settings": "^4.0.2",
+    "electron-store": "^6.0.1",
+    "electron-unhandled": "^3.0.2",
+    "electron-util": "^0.14.2",
+    "lodash": "^4.17.20",
+    "quasar": "^1.0.0",
+    "vue-i18n": "^8.0.0",
+    "vue-toasted": "^1.1.28",
+    "x-frame-bypass": "^1.0.2"
+  },
+  "devDependencies": {
+    "@quasar/app": "^2.0.0",
+    "babel-eslint": "^10.0.1",
+    "devtron": "^1.4.0",
+    "electron": "^9.0.0",
+    "electron-debug": "^3.0.1",
+    "electron-devtools-installer": "^3.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-vue": "^6.1.2",
+    "pug": "^3.0.0",
+    "pug-plain-loader": "^1.0.0"
+  },
+  "browserslist": [
+    "last 10 Chrome versions",
+    "last 10 Firefox versions",
+    "last 4 Edge versions",
+    "last 7 Safari versions",
+    "last 8 Android versions",
+    "last 8 ChromeAndroid versions",
+    "last 8 FirefoxAndroid versions",
+    "last 10 iOS versions",
+    "last 5 Opera versions"
+  ],
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}
