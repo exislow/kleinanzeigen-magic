@@ -6,16 +6,19 @@
 
 <script>
 import { user } from 'src/mixins/user';
+import { ek } from 'src/mixins/ek';
 
 export default {
   name: 'Logout',
-  mixins: [ user ],
+  mixins: [ user, ek ],
   created() {
+    this.$toasted.success('Du wurdest abgemeldet.');
     this.isLogin = false;
     this.email = null;
     this.password = null;
+    this.ads = null;
 
-    this.$router.push({ name: 'index', query: { logout: 'normal' } });
+    this.$router.push({ name: 'index' });
   },
 }
 </script>

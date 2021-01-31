@@ -14,7 +14,7 @@
           MenuLinks(v-if="!isLogin" v-bind="link.login")
           MenuLinks(v-else v-bind="link.logout")
       q-img.absolute-top(src="~assets/material.png" style="height: 150px")
-        .absolute-bottom.bg-transparent(v-if="isLogin")
+        .absolute-bottom.bg-transparent(v-if="isLogin && profile != null")
           q-list(dense)
             q-item(dense)
               q-item-section
@@ -34,7 +34,7 @@
                 q-icon(name="local_offer")
               q-item-section
                 | {{ profile.counters.onlineAds }}
-          .text-weight-bold {{ profile.preferences.contactName }}
+          q-btn(flat, dense, @click="openExternal(profile.webUrl)") {{ profile.preferences.contactName }}
           div {{ email }}
         .absolute-bottom.bg-transparent(v-else)
           q-skeleton(type="text")
@@ -45,6 +45,7 @@
 <script>
 import MenuLinks from 'components/MenuLinks.vue';
 import { user } from 'src/mixins/user';
+import { electronHelper } from 'src/mixins/electronHelper';
 
 const linksData = [
   {
@@ -57,7 +58,7 @@ const linksData = [
 export default {
   name: 'MainLayout',
   components: { MenuLinks },
-  mixins: [ user ],
+  mixins: [ user, electronHelper ],
   data () {
     return {
       leftDrawerOpen: false,

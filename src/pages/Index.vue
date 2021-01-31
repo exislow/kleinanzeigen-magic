@@ -8,12 +8,14 @@
             .text-subtitle2 Bitte einloggen.
           q-card-section
             q-form(@submit="login")
-              q-input(v-model="email", label="E-Mail", dense)
-              q-input(v-model="password", label="Passwort", :type="isPwd ? 'password' : 'text'" hint="Password with toggle", dense)
+              q-input(v-model="email", label="E-Mail", dense,
+                :rules="[value => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value) || 'Bitte gib deine E-Mail Adresse an.']",
+                lazy-rules)
+              q-input(v-model="password", label="Passwort", :type="isPwd ? 'password' : 'text'" hint="Password with toggle",
+                dense, :rules="[ val => !!val || 'Darf nicht leer sein.']", lazy-rules)
                 template(v-slot:append)
                   q-icon(:name="isPwd ? 'visibility_off' : 'visibility'", class="cursor-pointer", @click="isPwd = !isPwd")
-          q-card-section
-            q-btn(label="Login", type="submit", color="primary", @click="login")
+              q-btn.q-mt-lg(label="Login", type="submit", color="primary")
 </template>
 
 <script>
@@ -30,7 +32,13 @@ export default {
   },
   mounted() {
     this.$q.electron.ipcRenderer.on('m-login', (event, arg) => {
-      this.getProfile();
+      this.isLogin = arg;
+
+      if (this.isLogin) {
+        this.getProfile();
+      } else {
+        this.$q.loading.hide()
+      }
     });
 
     this.$q.electron.ipcRenderer.on('m-get-profile', (event, arg) => {
@@ -42,20 +50,13 @@ export default {
         this.$router.push({ name: 'overview' });
       }
     });
-
-    if (this.$route.query.logout === 'normal') {
-      this.$toasted.success('Du wurdest abgemeldet.');
-    } else if (this.$route.query.logout === 'error') {
-      this.$toasted.error('Es ist ein Fehler aufgetreten. Du wurdest abgemeldet.', { duration: 0 });
-      this.$q.loading.hide()
-    }
   },
   methods: {
     login: function() {
       this.showLoading();
       this.$q.electron.ipcRenderer.send( `r-login`, settings.getSync('credentials'));
     },
-    getProfile() {
+    getProfile: function() {
       this.$q.electron.ipcRenderer.send( `r-get-profile`);
     },
     showLoading: function() {

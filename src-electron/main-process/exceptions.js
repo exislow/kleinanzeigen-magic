@@ -1,19 +1,34 @@
-export const RemoteSystemError = (message) => {
-  this.message = message;
+export class RemoteSystemError extends Error {
+  constructor(args){
+    super(args);
+    this.name = 'RemoteSystemError';
+  }
 }
 
-export const RemoteNotFound = (message) => {
-  this.message = message;
+export class AxiosError extends Error {
+  constructor(args){
+    super(args);
+    this.name = 'AxiosError';
+  }
 }
 
-export const AuthorizationError = (message) => {
-  this.message = message;
+export class AttributeError extends Error {
+  constructor(args){
+    super(args);
+    this.name = 'AttributeError';
+  }
 }
 
-export const AxiosError = (message) => {
-  this.message = message;
+export class AuthorizationError extends Error {
+  constructor(args){
+    super(args);
+    this.name = 'AuthorizationError';
+  }
 }
 
-export const AttributeError = (message) => {
-  this.message = message;
+export class RemoteNotFound extends Error {
+  constructor(args){
+    super(args);
+    this.name = 'RemoteNotFound';
+  }
 }

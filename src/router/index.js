@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import settings from 'electron-settings';
 
 import routes from './routes'
 
@@ -15,7 +16,7 @@ Vue.use(VueRouter)
  */
 
 export default function (/* { store, ssrContext } */) {
-  const Router = new VueRouter({
+  const router = new VueRouter({
     scrollBehavior: () => ({ x: 0, y: 0 }),
     routes,
 
@@ -26,5 +27,19 @@ export default function (/* { store, ssrContext } */) {
     base: process.env.VUE_ROUTER_BASE
   })
 
-  return Router
+  router.beforeResolve((to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (!settings.getSync('isLogin')) {
+        next({
+          name: 'index' // the route the guest will be redirected to
+        });
+      } else {
+        next();
+      }
+    } else {
+      next();
+    }
+  });
+
+  return router
 }

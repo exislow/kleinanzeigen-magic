@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {RemoteSystemError, AuthorizationError, RemoteNotFound, AttributeError, AxiosError} from './exceptions';
+import { RemoteSystemError, AuthorizationError, RemoteNotFound, AttributeError, AxiosError } from './exceptions';
 import settings from 'electron-settings';
 import crypto from 'crypto';
 import _ from 'lodash';
@@ -28,7 +28,8 @@ export class Kleinanzeigen {
       auth: {
         username: this.BASIC_AUTH_USER,
         password: this.BASIC_AUTH_PASSWORD
-      }
+      },
+      validateStatus: function (status) { return true; }
     };
     this._axios = axios.create(axsioConfig);
   }
@@ -39,35 +40,37 @@ export class Kleinanzeigen {
       'X-ECG-USER-VERSION': this.APK_APP_VERSION,
       'X-ECG-Authorization-User': `email="${this._email}",password="${this._passwordHashed}"`,
       'X-EBAYK-APP': this.EBAYK_APP,
-      //'Authorization': `Basic ${this.BASIC_AUTH}`,
       'Content-Type': 'application/xml',
       'User-Agent': this.USER_AGENT
     }
   };
 
   _validateHttpResponse(response) {
-    console.log(response);
     if (response.status < 400) {
       return true;
-    } else if (response.status === 401) {
-      throw new AuthorizationError(`Not found: ${response.status}`);
-    } else if (response.status === 404) {
-      throw new RemoteNotFound(`Not found: ${response.status}`);
-    } else if (response.status >= 500) {
-      throw new RemoteSystemError(`Server error: ${response.status}`);
+    } else {
+      if (response.status === 401) {
+        throw new AuthorizationError(`Wrong user credentials (HTTP ${response.status}).`);
+      } else if (response.status === 404) {
+        throw new RemoteNotFound(`API not found (HTTP ${response.status}).`);
+      } else if (response.status >= 500) {
+        throw new RemoteSystemError(`Server side error (HTTP ${response.status}).`);
+      }
     }
   }
 
   async _httpGet(urlSuffix) {
+    let response = null;
+
     try {
-      const response = await this._axios.get(urlSuffix);
-
-      this._validateHttpResponse(response);
-
-      return response;
+      response = await this._axios.get(urlSuffix);
     } catch (e) {
-      throw AxiosError('Could not reach the API.')
+      throw new AxiosError(e);
     }
+
+    this._validateHttpResponse(response);
+
+    return response;
   }
 
   async _httpGetData(urlSuffix) {
@@ -94,51 +97,61 @@ export class Kleinanzeigen {
   }
 
   async _httpGetJsonContent(urlSuffix) {
-    try {
-      const data = await this._httpGetData(urlSuffix)
-      const content = this._getJsonContent(data);
+    let data = null;
 
-      return content;
+    try {
+      data = await this._httpGetData(urlSuffix)
     } catch (e) {
       throw e;
     }
+
+    const content = this._getJsonContent(data);
+
+    return content;
   }
 
   async _httpPut(urlSuffix, data = '') {
+    let response = null;
     try {
-      const response = await this._axios.put(urlSuffix, data);
-
-      this._validateHttpResponse(response);
-
-      return response;
+      response = await this._axios.put(urlSuffix, data);
     } catch (e) {
-      throw AxiosError('Could not reach the API.')
+      console.log(e);
+      throw AxiosError(e)
     }
+
+    this._validateHttpResponse(response);
+
+    return response;
   }
 
   async _httpDelete(urlSuffix, data = '') {
+    let response = null;
+
     try {
-      const response = await this._axios.delete(urlSuffix);
-
-      this._validateHttpResponse(response);
-
-      return response;
+      response = await this._axios.delete(urlSuffix);
     } catch (e) {
-      throw AxiosError('Could not reach the API.')
+      console.log(e);
+      throw AxiosError(e)
     }
+
+    this._validateHttpResponse(response);
+
+    return response;
   }
 
   async _httpPost(urlSuffix, data = '') {
+    let response = null;
+
     try {
-      const response = await this._axios.post(urlSuffix, data);
-
-      this._validateHttpResponse(response);
-
-      return response;
+      response = await this._axios.post(urlSuffix, data);
     } catch (e) {
       console.log(e);
-      throw AxiosError('Could not reach the API.')
+      throw AxiosError(e)
     }
+
+    this._validateHttpResponse(response);
+
+    return response;
   }
 
   async _changeAdStatus(id, status) {
@@ -147,6 +160,7 @@ export class Kleinanzeigen {
     }
 
     const urlSuffix = `/users/${this._email}/ads/${status}/${id}.json`;
+
     try {
       const response = await this._httpPut(urlSuffix);
       const result = response.status === 204;
@@ -275,7 +289,6 @@ export class Kleinanzeigen {
   }
 
   async loginTest() {
-
     try {
       const ads = await this.getAds();
 

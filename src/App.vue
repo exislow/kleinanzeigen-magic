@@ -20,11 +20,31 @@ export default {
   },
   mixins: [ user ],
   mounted() {
-    this.$q.electron.ipcRenderer.on('m-login-error', (event, arg) => {
-      this.isLogin = false;
-
-      this.$router.push({ name: 'index', query: { logout: 'error' } });
+    this.$q.electron.ipcRenderer.on('m-error-login', (event, arg) => {
+      this.errorLogin();
     });
+    this.$q.electron.ipcRenderer.on('m-error-axios', (event, arg) => {
+      this.errorGeneral(arg);
+    });
+    this.$q.electron.ipcRenderer.on('m-error-general', (event, arg) => {
+      this.errorGeneral(arg);
+    });
+  },
+
+  methods: {
+    errorLogin: function () {
+      this.isLogin = false;
+      this.profile = null;
+
+      if (this.$route.name !== 'index') {
+        this.$router.push({ name: 'index' });
+      }
+      this.$toasted.error('Falsche E-Mail Adresse und/oder Passwort.', { duration: 0 });
+    },
+
+    errorGeneral: function (msg) {
+      this.$toasted.error(msg);
+    }
   }
 }
 </script>

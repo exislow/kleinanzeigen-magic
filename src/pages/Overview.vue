@@ -32,6 +32,8 @@
                     | VIEWCOUNT
                     q-icon.on-left.on-right(name="star")
                     | WATCHCOUNT
+                    q-icon.on-left.on-right(name="event")
+                    | {{ ad['start-date-time'].value.substring(0, 10) }}
               q-item
                 q-item-section(avatar)
                 q-item-section
@@ -81,11 +83,12 @@
 <script>
 import { ek } from 'src/mixins/ek';
 import { user } from 'src/mixins/user';
+import { electronHelper } from 'src/mixins/electronHelper';
 
-// INSERT DATE112
 export default {
   name: 'PageOverview',
-  mixins: [ ek, user ],
+  mixins: [ ek, user, electronHelper ],
+
   data () {
     return {
       confirmDelete: {
@@ -101,11 +104,7 @@ export default {
       adsLoading: false,
     }
   },
-  created: function () {
-    if (!this.isLogin) {
-      this.$router.push({ name: 'index', query: { necessary: 'true' } });
-    }
-  },
+
   mounted: function () {
     this.$q.electron.ipcRenderer.on('m-get-ads', (event, arg) => {
       console.log('From M', arg);
@@ -190,10 +189,6 @@ export default {
       }
       this.$q.electron.ipcRenderer.send( `r-ads-topup`, args);
       this.dialogTopUpHide();
-    },
-
-    openExternal: function(url) {
-      this.$q.electron.shell.openExternal(url);
     }
   }
 }

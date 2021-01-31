@@ -10,8 +10,7 @@ export const loginTest = async () => {
 
     return result;
   } catch (e) {
-    console.log(e);
-    // TODO: Error handling
+    throw e;
   }
 };
 
@@ -23,8 +22,7 @@ export const getAds = async () => {
 
     return result;
   } catch (e) {
-    console.log(e);
-    // TODO: Error handling
+    throw e;
   }
 };
 
@@ -37,8 +35,7 @@ export const getViewCount = async () => {
 
     return result;
   } catch (e) {
-    console.log(e);
-    // TODO: Error handling
+    throw e;
   }
 };
 
@@ -51,8 +48,7 @@ export const getWatchlistCount = async () => {
 
     return result;
   } catch (e) {
-    console.log(e);
-    // TODO: Error handling
+    throw e;
   }
 };
 
@@ -64,8 +60,7 @@ export const adPause = async (id) => {
 
     return result;
   } catch (e) {
-    console.log(e);
-    // TODO: Error handling
+    throw e;
   }
 };
 
@@ -77,8 +72,7 @@ export const adResume = async (id) => {
 
     return result;
   } catch (e) {
-    console.log(e);
-    // TODO: Error handling
+    throw e;
   }
 };
 
@@ -90,8 +84,7 @@ export const adDelete = async (id) => {
 
     return result;
   } catch (e) {
-    console.log(e);
-    // TODO: Error handling
+    throw e;
   }
 };
 
@@ -132,8 +125,7 @@ export const adTopUp = async (id, price) => {
 
     return resultCreate, resultDelete;
   } catch (e) {
-    console.log(e);
-    // TODO: Error handling
+    throw e;
   }
 };
 
@@ -145,7 +137,6 @@ export const getProfile = async () => {
 
     return result;
   } catch (e) {
-    console.log(e);
-    // TODO: Error handling
+    throw e;
   }
 };

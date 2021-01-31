@@ -1,9 +1,7 @@
 import { ipcMain } from 'electron';
 import { getAds, loginTest, adPause, adResume, adDelete, adTopUp, getProfile } from './kleinanzeigen-workflow';
-import settings from 'electron-settings';
+import { exceptionHandler } from './utilities.js';
 
-
-const ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:81.0) Gecko/20100101 Firefox/81.0';
 
 ipcMain.on('r-get-ads', async (event, args) => {
   try {
@@ -11,7 +9,7 @@ ipcMain.on('r-get-ads', async (event, args) => {
 
     event.reply('m-get-ads', ads);
   } catch (e) {
-    console.log(e);
+    exceptionHandler(e, event);
   }
 });
 
@@ -21,7 +19,7 @@ ipcMain.on('r-ad-pause', async (event, args) => {
 
     event.reply('m-ad-pause', status);
   } catch (e) {
-    console.log(e);
+    exceptionHandler(e, event);
   }
 });
 
@@ -31,7 +29,7 @@ ipcMain.on('r-ad-resume', async (event, args) => {
 
     event.reply('m-ad-resume', status);
   } catch (e) {
-    console.log(e);
+    exceptionHandler(e, event);
   }
 });
 
@@ -41,19 +39,20 @@ ipcMain.on('r-ads-delete', async (event, args) => {
 
     event.reply('m-ads-delete', status);
   } catch (e) {
-    console.log(e);
+    exceptionHandler(e, event);
   }
 });
 
 ipcMain.on('r-login', async (event, args) => {
+  let status = false;
   try {
-    const status = await loginTest();
-    await settings.set('isLogin', status);
+    status = await loginTest();
 
-    event.reply('m-login', status);
   } catch (e) {
-    console.log(e);
+    exceptionHandler(e, event);
   }
+
+  event.reply('m-login', status);
 });
 
 ipcMain.on('r-ads-topup', async (event, args) => {
@@ -62,7 +61,7 @@ ipcMain.on('r-ads-topup', async (event, args) => {
 
     event.reply('m-ads-topup', status);
   } catch (e) {
-    console.log(e);
+    exceptionHandler(e, event);
   }
 });
 
@@ -72,6 +71,6 @@ ipcMain.on('r-get-profile', async (event, args) => {
 
     event.reply('m-get-profile', profile);
   } catch (e) {
-    console.log(e);
+    exceptionHandler(e, event);
   }
 });

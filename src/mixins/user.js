@@ -7,7 +7,8 @@ export const user = {
         return this.$store.state.user.isLogin;
       },
       set (val) {
-        this.$store.commit('user/updateIsLogin', val)
+        this.$store.commit('user/updateIsLogin', val);
+        settings.setSync('isLogin', val);
       }
     },
     email: {
@@ -15,7 +16,8 @@ export const user = {
         return this.$store.state.user.email;
       },
       set (val) {
-        this.$store.commit('user/updateEmail', val)
+        this.$store.commit('user/updateEmail', val);
+        settings.setSync('credentials.email', val);
       }
     },
     password: {
@@ -23,7 +25,8 @@ export const user = {
         return this.$store.state.user.password;
       },
       set (val) {
-        this.$store.commit('user/updatePassword', val)
+        this.$store.commit('user/updatePassword', val);
+        settings.setSync('credentials.password', val);
       }
     },
     profile: {
@@ -31,7 +34,7 @@ export const user = {
         return this.$store.state.user.profile;
       },
       set (val) {
-        this.$store.commit('user/updateProfile', val)
+        this.$store.commit('user/updateProfile', val);
       }
     }
   }
