@@ -39,11 +39,11 @@ export default {
       if (this.$route.name !== 'index') {
         this.$router.push({ name: 'index' });
       }
-      this.$toasted.error('Falsche E-Mail Adresse und/oder Passwort.', { duration: 0 });
+      this.$toasted.error('Falsche E-Mail Adresse und/oder Passwort.', { duration: 0, icon: 'error' });
     },
 
     errorGeneral: function (msg) {
-      this.$toasted.error(msg);
+      this.$toasted.error(msg, { icon: 'error' });
     }
   }
 }

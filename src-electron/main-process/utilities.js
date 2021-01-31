@@ -16,5 +16,7 @@ export const exceptionHandler = (exc, ipcEvent) => {
     ipcEvent.reply('m-error-general', generateExceptionStr(exc));
   } else if (exc.constructor == AxiosError) {
     ipcEvent.reply('m-error-axios', exc);
+  } else {
+    ipcEvent.reply('m-error-general', exc.message);
   }
 }

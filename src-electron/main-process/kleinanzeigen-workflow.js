@@ -27,11 +27,11 @@ export const getAds = async () => {
 };
 
 
-export const getViewCount = async () => {
+export const getViewCount = async (adId) => {
   const k = new Kleinanzeigen();
 
   try {
-    const result = await k.getCountViews();
+    const result = await k.getCountViews(adId);
 
     return result;
   } catch (e) {
@@ -40,11 +40,11 @@ export const getViewCount = async () => {
 };
 
 
-export const getWatchlistCount = async () => {
+export const getWatchlistCount = async (adId) => {
   const k = new Kleinanzeigen();
 
   try {
-    const result = await k.getCountWatchlist();
+    const result = await k.getCountWatchlist(adId);
 
     return result;
   } catch (e) {
@@ -121,7 +121,12 @@ export const adTopUp = async (id, price) => {
     adXmlPost += '</ad:ad>';
 
     const resultCreate = await k.createAd(adXmlPost);
-    const resultDelete = await k.deleteAd(id);
+    let resultDelete = null;
+
+    if (resultCreate === true) {
+      resultDelete = await k.deleteAd(id);
+      // TODO: Check if creation was successfull otherwise delete newly created item.
+    }
 
     return resultCreate, resultDelete;
   } catch (e) {

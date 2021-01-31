@@ -5,7 +5,6 @@
         q-btn-group(spread)
           q-btn(@click="openExternal('https://www.ebay-kleinanzeigen.de/')", icon="language", label="Kleinanzeigen Portal")
           q-btn(@click="getAds()", icon="refresh", label="Anzeigen")
-          q-btn(:to="{ name: 'logout' }", icon="cancel", label="Logout")
     .row.q-pa-md.q-gutter-y-sm(v-if="!adsLoading", v-for="ad in ads", :key="ad.id")
       .col-12
         q-card
@@ -29,9 +28,9 @@
                 q-item-section
                   q-item-label {{ad.price.amount.value}} {{ad.price['currency-iso-code'].value['localized-label']}}
                     q-icon.on-left.on-right(name="visibility")
-                    | VIEWCOUNT
+                    | {{ ad.count_view }}
                     q-icon.on-left.on-right(name="star")
-                    | WATCHCOUNT
+                    | {{ ad.count_watch}}
                     q-icon.on-left.on-right(name="event")
                     | {{ ad['start-date-time'].value.substring(0, 10) }}
               q-item

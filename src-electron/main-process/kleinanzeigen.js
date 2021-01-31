@@ -200,9 +200,9 @@ export class Kleinanzeigen {
     const urlSuffix = `/v2/counters/ads/vip/${id}.json`;
 
     try {
-      const content = await this._httpGetJsonContent(urlSuffix);
+      const content = await this._httpGetData(urlSuffix);
 
-      return content;
+      return content.value;
     } catch (e) {
       throw e;
     }
@@ -210,14 +210,15 @@ export class Kleinanzeigen {
 
   async getCountWatchlist(id) {
     const urlSuffix = `/v2/counters/ads/watchlist?adIds=${id}`;
+    let content = null;
 
     try {
-      const content = await this._httpGetJsonContent(urlSuffix);
-
-      return content.counters[0];
+       content = await this._httpGetData(urlSuffix);
     } catch (e) {
       throw e;
     }
+
+    return content.counters[0].value;
   }
 
   async getProfile() {
@@ -282,7 +283,7 @@ export class Kleinanzeigen {
     try {
       const response = await this._httpPost(urlSuffix, xml);
 
-      return response;
+      return response.status === 201;
     } catch (e) {
       throw e;
     }

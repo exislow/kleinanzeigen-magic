@@ -1,13 +1,20 @@
 import { ipcMain } from 'electron';
-import { getAds, loginTest, adPause, adResume, adDelete, adTopUp, getProfile } from './kleinanzeigen-workflow';
+import { getAds, loginTest, adPause, adResume, adDelete, adTopUp, getProfile, getViewCount, getWatchlistCount } from './kleinanzeigen-workflow';
 import { exceptionHandler } from './utilities.js';
 
 
 ipcMain.on('r-get-ads', async (event, args) => {
   try {
     const ads = await getAds();
+    let adsEnriched = [];
 
-    event.reply('m-get-ads', ads);
+    for (const item of ads) {
+      item['count_view'] = await getViewCount(item.id);
+      item['count_watch'] = await getWatchlistCount(item.id);
+      adsEnriched.push(item);
+    }
+
+    event.reply('m-get-ads', adsEnriched);
   } catch (e) {
     exceptionHandler(e, event);
   }
