@@ -6,6 +6,7 @@
   "author": "exislow+github@gmail.com",
   "private": true,
   "license": "GPLv3",
+  "repository": "git@github.com:exislow/kleinanzeigen-magic.git",
   "scripts": {
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0"

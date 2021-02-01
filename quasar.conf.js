@@ -169,25 +169,38 @@ module.exports = function(ctx) {
 
     // Full list of options: https://quasar.dev/quasar-cli/developing-electron-apps/configuring-electron
     electron: {
-      bundler: "packager", // 'packager' or 'builder'
+      bundler: "builder", // 'packager' or 'builder'
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
         // OS X / Mac App Store
-        appBundleId: 'com.exislow.kleinanzeigen-magic',
-        appCategoryType: 'public.app-category.productivity',
+        appBundleId: "com.exislow.kleinanzeigen-magic",
+        appCategoryType: "public.app-category.productivity",
         osxSign: true,
-        protocol: 'kam://path',
+        protocol: "kam://path",
         // Windows only
         // win32metadata: { ... },
         all: true,
-        appCopyright: '2021-present exislow'
+        appCopyright: "2021-present exislow"
       },
 
       builder: {
         // https://www.electron.build/configuration/configuration
-
-        appId: "kleinanzeigen-magic"
+        appId: "com.exislow.kleinanzeigen-magic",
+        productName: "Kleinanzeigen Magic",
+        copyright: "2021-present exislow",
+        remoteBuild: true,
+        linux: {
+          target: ["deb", "rpm", "freebsd", "pacman", "zip"],
+        },
+        win: {
+          target: ["nsis"],
+        },
+        mac: {
+          category: "public.app-category.productivity",
+          target: ["default"],
+          identity: null
+        },
       },
 
       unPackagedInstallParams: ['--ignore-optional'],
