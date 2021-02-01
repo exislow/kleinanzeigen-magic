@@ -1,16 +1,17 @@
 {
   "name": "kleinanzeigen-magic",
-  "version": "0.0.1",
+  "version": "0.4.0",
   "description": "Kleinanzeigen Magic App",
   "productName": "Kleinanzeigen Magic",
   "author": "exislow+github@gmail.com",
   "private": true,
+  "license": "GPLv3",
   "scripts": {
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.0.0",
+    "@quasar/extras": "^1.9.15",
     "@ungap/custom-elements-builtin": "^0.6.3",
     "axios": "^0.18.1",
     "core-js": "^3.6.5",
@@ -20,18 +21,20 @@
     "electron-unhandled": "^3.0.2",
     "electron-util": "^0.14.2",
     "lodash": "^4.17.20",
-    "quasar": "^1.0.0",
+    "quasar": "^1.15.1",
     "vue-i18n": "^8.0.0",
     "vue-toasted": "^1.1.28",
     "x-frame-bypass": "^1.0.2"
   },
   "devDependencies": {
-    "@quasar/app": "^2.0.0",
+    "@quasar/app": "^2.1.14",
     "babel-eslint": "^10.0.1",
     "devtron": "^1.4.0",
     "electron": "^9.0.0",
+    "electron-builder": "^22.4.0",
     "electron-debug": "^3.0.1",
     "electron-devtools-installer": "^3.0.0",
+    "electron-packager": "^14.1.1",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
     "eslint-loader": "^3.0.3",

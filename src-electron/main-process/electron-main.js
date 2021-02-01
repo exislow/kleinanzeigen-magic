@@ -1,7 +1,7 @@
 import { app, BrowserWindow, nativeTheme } from 'electron';
 import contextMenu from 'electron-context-menu';
 import unhandled from 'electron-unhandled';
-import { enforceMacOSAppLocation, setContentSecurityPolicy } from 'electron-util';
+import { enforceMacOSAppLocation } from 'electron-util';
 
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
@@ -65,8 +65,8 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 600,
+    width: 800,
+    height: 800,
     useContentSize: true,
     webPreferences: {
       // Change from /quasar.conf.js > electron > nodeIntegration;
