@@ -4,7 +4,7 @@
       .col-6
         q-card.my-card
           q-card-section.bg-teal.text-white
-            .text-h6 Kleinazeigen
+            .text-h6 Kleinanzeigen
             .text-subtitle2 Bitte einloggen.
           q-card-section
             q-form(@submit="login")

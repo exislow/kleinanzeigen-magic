@@ -37,14 +37,14 @@
                 q-item-section(avatar)
                 q-item-section
                   q-btn-group(outline)
-                    q-btn(flat, color="green", @click="dialogTopUpShow(ad)")
-                      q-icon.rotate-270(name="double_arrow")
-                      q-tooltip Anzeige gratis nach oben schieben.
                     q-btn(flat, :icon="ad['ad-status'].value == 'ACTIVE' ? 'public_off' : 'public'", @click="adPauseResume(ad['ad-status'].value == 'ACTIVE' ? 'pause' : 'resume', ad.id)")
                       q-tooltip Anzeige deaktivieren.
+                    q-btn(outline, color="green", @click="dialogTopUpShow(ad)")
+                      q-icon.rotate-270(name="double_arrow")
+                      q-tooltip Anzeige gratis nach oben schieben.
                     q-btn(flat, color="red", icon="delete_forever", @click="dialogDeleteShow(ad)")
                       q-tooltip Anzeige löschen.
-    .row.q-pa-md.q-gutter-y-sm(v-else, v-for="i in 3", :key="i")
+    .row.q-pa-md.q-gutter-y-sm(v-if="adsLoading", v-for="i in 3", :key="Math.random()")
       .col-12
         q-card
           q-card-section(horizontal)
@@ -106,23 +106,23 @@ export default {
 
   mounted: function () {
     this.$q.electron.ipcRenderer.on('m-get-ads', (event, arg) => {
-      console.log('From M', arg);
-      this.adsLoading = false;
+      console.log('From M-get-ads', arg);
       this.ads = arg;
+      this.adsLoading = false;
     });
 
     this.$q.electron.ipcRenderer.on('m-ad-pause', (event, arg) => {
-      console.log('From M', arg);
+      console.log('From M-ad-pause', arg);
       this.getAds();
     });
 
     this.$q.electron.ipcRenderer.on('m-ad-resume', (event, arg) => {
-      console.log('From M', arg);
+      console.log('From M-ad-resume', arg);
       this.getAds();
     });
 
     this.$q.electron.ipcRenderer.on('m-ads-delete', (event, arg) => {
-      console.log('From M', arg);
+      console.log('From M-ads-delete', arg);
       if (arg.success === true) {
         this.ads = arg.data;
       }
@@ -139,6 +139,7 @@ export default {
   methods: {
     getAds: async function() {
       this.adsLoading = true;
+      this.ads = [];
       this.$q.electron.ipcRenderer.send('r-get-ads');
     },
 
