@@ -191,7 +191,7 @@ module.exports = function(ctx) {
         copyright: "2021-present exislow",
         remoteBuild: true,
         linux: {
-          target: ["deb", "rpm", "pacman", "zip"],
+          target: ["pacman", "deb", "rpm", "zip"],
           synopsis: "Beschleunige deine eBay Kleinanzeigen Workflows!",
           description:  "Beschleunige deine eBay Kleinanzeigen Workflows!",
           category: "Network"
