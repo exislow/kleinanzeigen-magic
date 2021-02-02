@@ -1,6 +1,6 @@
 {
   "name": "kleinanzeigen-magic",
-  "version": "0.4.2",
+  "version": "0.4.1",
   "description": "Kleinanzeigen Magic App",
   "productName": "Kleinanzeigen Magic",
   "author": "exislow+github@gmail.com",
@@ -22,7 +22,7 @@
     "electron-unhandled": "^3.0.2",
     "electron-util": "^0.14.2",
     "lodash": "^4.17.20",
-    "quasar": "^1.15.1",
+    "quasar": "^1.15.2",
     "vue-i18n": "^8.0.0",
     "vue-toasted": "^1.1.28",
     "x-frame-bypass": "^1.0.2"
