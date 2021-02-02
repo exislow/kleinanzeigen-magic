@@ -201,6 +201,10 @@ module.exports = function(ctx) {
           target: ["default"],
           identity: null
         },
+        publish: {
+          'provider': 'github',
+          'releaseType': 'release'
+        }
       },
 
       unPackagedInstallParams: ['--ignore-optional'],
