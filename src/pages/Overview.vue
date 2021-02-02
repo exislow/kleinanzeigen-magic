@@ -10,8 +10,8 @@
         q-card
           q-card-section(horizontal)
             .row.ad-img-box.items-center
-              q-img.ad-img.rounded-borders(:src="('picture' in ad.pictures) ? ad.pictures.picture[0].link[2].href : 'na.png'", sizes="150px", spinner-color="primary",
-                :class="{ 'ad-img-inactive': ad['ad-status'].value !== 'ACTIVE', 'ad-img-na': !('picture' in ad.pictures)}")
+              q-img.ad-img.rounded-borders(:src="('pictures' in ad) ? ad.pictures.picture[0].link[2].href : 'na.png'", sizes="150px", spinner-color="primary",
+                :class="{ 'ad-img-inactive': ad['ad-status'].value !== 'ACTIVE', 'ad-img-na': !('pictures' in ad)}")
                 template(v-slot:error)
                   .absolute-full.flex.flex-center.bg-blue-grey.text-white
                     | Image N/A
@@ -106,23 +106,19 @@ export default {
 
   mounted: function () {
     this.$q.electron.ipcRenderer.on('m-get-ads', (event, arg) => {
-      console.log('From M-get-ads', arg);
       this.ads = arg;
       this.adsLoading = false;
     });
 
     this.$q.electron.ipcRenderer.on('m-ad-pause', (event, arg) => {
-      console.log('From M-ad-pause', arg);
       this.getAds();
     });
 
     this.$q.electron.ipcRenderer.on('m-ad-resume', (event, arg) => {
-      console.log('From M-ad-resume', arg);
       this.getAds();
     });
 
     this.$q.electron.ipcRenderer.on('m-ads-delete', (event, arg) => {
-      console.log('From M-ads-delete', arg);
       if (arg.success === true) {
         this.ads = arg.data;
       }
