@@ -192,6 +192,9 @@ module.exports = function(ctx) {
         remoteBuild: true,
         linux: {
           target: ["deb", "rpm", "freebsd", "pacman", "zip"],
+          synopsis: "Beschleunige deine eBay Kleinanzeigen Workflows!",
+          description:  "Beschleunige deine eBay Kleinanzeigen Workflows!",
+          category: "Network"
         },
         win: {
           target: ["nsis"],
