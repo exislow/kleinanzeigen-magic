@@ -176,7 +176,7 @@ export class Kleinanzeigen {
 
     try {
       const content = await this._httpGetJsonContent(urlSuffix);
-      const ad = content.ad;
+      const ad = content.ad ?? [];
 
       return ad;
     } catch (e) {
