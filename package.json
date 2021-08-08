@@ -11,8 +11,9 @@
   "license": "GPLv3",
   "repository": "git@github.com:exislow/kleinanzeigen-magic.git",
   "scripts": {
-    "lint": "eslint --ext .js,.vue ./",
-    "test": "echo \"No test specified\" && exit 0"
+    "dev": "quasar dev --debug -m electron",
+    "build": "quasar build -m electron",
+    "lint": "eslint --ext .js,.vue ./"
   },
   "dependencies": {
     "@quasar/extras": "^1.9.15",
