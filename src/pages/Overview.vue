@@ -26,7 +26,7 @@
                 q-item-section(avatar)
                   q-icon(name="error")
                 q-item-section
-                  q-item-label {{ad.price.amount.value}} {{ad.price['currency-iso-code'].value['localized-label']}}
+                  q-item-label {{ formattedAdPrice(ad) }}
                     q-icon.on-left.on-right(name="visibility")
                     | {{ ad.count_view }}
                     q-icon.on-left.on-right(name="star")
@@ -80,13 +80,13 @@
 </template>
 
 <script>
-import { ek } from 'src/mixins/ek';
-import { user } from 'src/mixins/user';
-import { electronHelper } from 'src/mixins/electronHelper';
+import { ek } from 'src/mixins/ek'
+import { user } from 'src/mixins/user'
+import { electronHelper } from 'src/mixins/electronHelper'
 
 export default {
   name: 'PageOverview',
-  mixins: [ ek, user, electronHelper ],
+  mixins: [ek, user, electronHelper],
 
   data () {
     return {
@@ -106,85 +106,100 @@ export default {
 
   mounted: function () {
     this.$q.electron.ipcRenderer.on('m-get-ads', (event, arg) => {
-      this.ads = arg;
-      this.adsLoading = false;
-    });
+      this.ads = arg
+      this.adsLoading = false
+    })
 
     this.$q.electron.ipcRenderer.on('m-ad-pause', (event, arg) => {
-      this.getAds();
-    });
+      this.getAds()
+    })
 
     this.$q.electron.ipcRenderer.on('m-ad-resume', (event, arg) => {
-      this.getAds();
-    });
+      this.getAds()
+    })
 
     this.$q.electron.ipcRenderer.on('m-ads-delete', (event, arg) => {
       if (arg.success === true) {
-        this.ads = arg.data;
+        this.ads = arg.data
       }
-    });
+    })
 
     if (this.ads != undefined) {
       if (this.ads.length === 0) {
-        this.getAds();
+        this.getAds()
       }
     } else {
-      this.getAds();
+      this.getAds()
     }
   },
   methods: {
-    getAds: async function() {
-      this.adsLoading = true;
-      this.ads = [];
-      this.$q.electron.ipcRenderer.send('r-get-ads');
+    getAds: async function () {
+      this.adsLoading = true
+      this.ads = []
+      this.$q.electron.ipcRenderer.send('r-get-ads')
     },
 
-    adPauseResume: function(mode, adId) {
+    adPauseResume: function (mode, adId) {
       const args = {
         id: adId
       }
-      this.$q.electron.ipcRenderer.send( `r-ad-${mode}`, args);
+      this.$q.electron.ipcRenderer.send(`r-ad-${mode}`, args)
     },
 
     dialogDeleteShow: function (ad) {
-      this.confirmDelete.id = ad.id;
-      this.confirmDelete.title = ad.title.value;
-      this.confirmDelete.show = true;
+      this.confirmDelete.id = ad.id
+      this.confirmDelete.title = ad.title.value
+      this.confirmDelete.show = true
     },
 
-    dialogDeleteHide() {
-      this.confirmDelete.show = false;
-      this.confirmDelete.id = null;
-      this.confirmDelete.title = null;
+    dialogDeleteHide () {
+      this.confirmDelete.show = false
+      this.confirmDelete.id = null
+      this.confirmDelete.title = null
     },
 
-    adsDelete: function(adId) {
+    adsDelete: function (adId) {
       const args = {
         id: adId
       }
-      this.$q.electron.ipcRenderer.send( `r-ads-delete`, args);
-      this.dialogDeleteHide();
+      this.$q.electron.ipcRenderer.send(`r-ads-delete`, args)
+      this.dialogDeleteHide()
     },
 
-    dialogTopUpShow(ad) {
-      this.confirmTopUp.id = ad.id;
-      this.confirmTopUp.price = ad.price.amount.value;
-      this.confirmTopUp.show = true;
+    dialogTopUpShow (ad) {
+      this.confirmTopUp.id = ad.id
+      this.confirmTopUp.price = ad.price.amount.value
+      this.confirmTopUp.show = true
     },
 
-    dialogTopUpHide() {
-      this.confirmTopUp.show = false;
-      this.confirmTopUp.id = null;
-      this.confirmTopUp.price = null;
+    dialogTopUpHide () {
+      this.confirmTopUp.show = false
+      this.confirmTopUp.id = null
+      this.confirmTopUp.price = null
     },
 
-    adsTopUp: function(adId, price) {
+    adsTopUp: function (adId, price) {
       const args = {
         id: adId,
         price: price
       }
-      this.$q.electron.ipcRenderer.send( `r-ads-topup`, args);
-      this.dialogTopUpHide();
+      this.$q.electron.ipcRenderer.send(`r-ads-topup`, args)
+      this.dialogTopUpHide()
+    },
+    formattedAdPrice (ad) {
+      const { value: priceType } = ad.price['price-type']
+      const isFreeItem = priceType === 'FREE'
+
+      if (isFreeItem) {
+        return 'zu verschenken'
+      }
+
+      const isNegotiable = priceType === 'PLEASE_CONTACT'
+      const priceSuffix = isNegotiable ? ' (VB)' : ''
+
+      const { value: amount } = ad.price.amount
+      const currency = ad.price['currency-iso-code'].value['localized-label']
+      return `${amount} ${currency}` + priceSuffix
     }
   }
 }
