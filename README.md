@@ -11,19 +11,19 @@ yarn
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
-quasar dev --debug -m electron
+yarn dev
 ```
 
 Also see in `doc`.
 
 ### Lint the files
 ```bash
-yarn run lint
+yarn lint
 ```
 
 ### Build the app for production
 ```bash
-quasar build -m electron
+yarn build
 ```
 
 ### Customize the configuration
