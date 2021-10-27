@@ -5,6 +5,7 @@
         q-btn(flat, dense, round, icon="menu", aria-label="Menu", @click="leftDrawerOpen = !leftDrawerOpen")
         q-toolbar-title
           | Kleinanzeigen Magic
+        | v{{ version }}
     q-drawer(v-model="leftDrawerOpen", show-if-above, bordered, no-swipe-close, overlay)
       q-scroll-area(style="height: calc(100% - 150px); margin-top: 150px;")
         q-list
@@ -46,6 +47,7 @@
 import MenuLinks from 'components/MenuLinks.vue';
 import { user } from 'src/mixins/user';
 import { electronHelper } from 'src/mixins/electronHelper';
+import { version } from 'src/../package.json'
 
 const linksData = [
   {
@@ -61,6 +63,7 @@ export default {
   mixins: [ user, electronHelper ],
   data () {
     return {
+      version: version,
       leftDrawerOpen: false,
       essentialLinks: linksData,
       link: {
