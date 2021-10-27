@@ -1,7 +1,7 @@
-# Kleinanzeigen Magic (kleinanzeigen-magic)
-Die Kleinanzeigen Magic App hilft bestimmte Vorgänge bei deinen [eBay Kleinanzeigen](https://www.ebay-kleinanzeigen.de/) zu beschleunigen. So kannst beispielsweise deine Anzeigen kostenfrei wieder ganz oben in der Ergebnisliste der Suche platzieren.
+# Kleinanzeigen Magic
+The Kleinanzeigen Magic App helps you to speed up certain workflows at [eBay Kleinanzeigen](https://www.ebay-kleinanzeigen.de/) for free! For instance, it is possible to push your ads to the very top of the search results with one click.
 
-[Hier](https://github.com/exislow/kleinanzeigen-magic/releases) kannst du dir die Kleinanzeigen Magic App downloaden.
+You can download a compiled release of this app [here](https://github.com/exislow/kleinanzeigen-magic/releases).
 
 
 ## Install the dependencies
@@ -40,6 +40,6 @@ See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
 5. Start reverse engineering.
 
 
-## Shouts
+## Credits
 
-* I got the inspiration from the Python based [ebk-client](https://github.com/tejado/ebk-client). I have ported it to NodeJS, extended it and also built a GUI on top.
+* I got the inspiration from the Python based [ebk-client](https://github.com/tejado/ebk-client). So I have ported it to NodeJS, extended it and also built a GUI on top.
