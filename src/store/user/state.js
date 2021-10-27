@@ -3,6 +3,7 @@ export default function () {
     isLogin: false,
     email: null,
     password: null,
-    profile: null
+    profile: null,
+    token: null
   }
 }

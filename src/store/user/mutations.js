@@ -17,3 +17,7 @@ export function updatePassword (state, val) {
 export function updateProfile (state, val) {
   state.profile = val;
 }
+
+export function updateToken (state, val) {
+  state.token = val;
+}
