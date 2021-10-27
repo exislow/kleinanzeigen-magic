@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import { getAds, loginTest, adPause, adResume, adDelete, adTopUp, getProfile, getViewCount, getWatchlistCount } from './kleinanzeigen-workflow';
+import { getAds, login, adPause, adResume, adDelete, adTopUp, getProfile, getViewCount, getWatchlistCount } from './kleinanzeigen-workflow';
 import { exceptionHandler } from './utilities.js';
 
 
@@ -53,7 +53,7 @@ ipcMain.on('r-ads-delete', async (event, args) => {
 ipcMain.on('r-login', async (event, args) => {
   let status = false;
   try {
-    status = await loginTest();
+    status = await login();
 
   } catch (e) {
     exceptionHandler(e, event);

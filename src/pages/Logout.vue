@@ -17,6 +17,7 @@ export default {
     this.email = null;
     this.password = null;
     this.ads = null;
+    this.token = null;
 
     this.$router.push({ name: 'index' });
   },

@@ -5,8 +5,8 @@ import crypto from 'crypto';
 import _ from 'lodash';
 
 export class Kleinanzeigen {
-  APK_APP_VERSION = '12.2.0';
-  USER_AGENT = 'Dalvik/2.2.0';
+  APK_APP_VERSION = '13.4.2';
+  USER_AGENT = 'Dalvik/13.4.2';
   BASE_URL = 'https://api.ebay-kleinanzeigen.de/api';
   EBAYK_APP = '13a6dde3-935d-4cd8-9992-db8a8c4b6c0f1456515662229';
   BASIC_AUTH_USER = 'android';
@@ -16,33 +16,48 @@ export class Kleinanzeigen {
     try {
       this._email = settings.getSync('credentials.email');
       this._password = settings.getSync('credentials.password');
+      this._token = settings.getSync('credentials.token');
     } catch (e) {
       throw new AttributeError('Credentials not set. Please provide e-mail address and password.')
     }
 
     this._passwordHashed = crypto.createHash('sha1').update(this._password, 'utf8').digest('base64');
 
-    const axsioConfig = {
+    const axiosConfig = {
       baseURL: this.BASE_URL,
-      headers: this._generateHeader(),
+      headers: (this._token) ? this._generateHeaderToken() : this._generateHeaderPassword(),
       auth: {
         username: this.BASIC_AUTH_USER,
         password: this.BASIC_AUTH_PASSWORD
       },
       validateStatus: function (status) { return true; }
     };
-    this._axios = axios.create(axsioConfig);
+    this._axios = axios.create(axiosConfig);
   }
 
-  _generateHeader() {
+  _generateHeaderBase() {
     return {
       'X-ECG-USER-AGENT': `ebayk-android-app-${this.APK_APP_VERSION}`,
       'X-ECG-USER-VERSION': this.APK_APP_VERSION,
-      'X-ECG-Authorization-User': `email="${this._email}",password="${this._passwordHashed}"`,
+      'X-ECG-Authorization-User': null,
       'X-EBAYK-APP': this.EBAYK_APP,
       'Content-Type': 'application/xml',
       'User-Agent': this.USER_AGENT
     }
+  };
+
+  _generateHeaderPassword() {
+    const header = this._generateHeaderBase();
+    header['X-ECG-Authorization-User'] = `email="${this._email}",password="${this._passwordHashed}"`;
+
+    return header;
+  };
+
+  _generateHeaderToken() {
+    const header = this._generateHeaderBase();
+    header['X-ECG-Authorization-User'] = `email="${this._email}",token="${this._token}"`;
+
+    return header;
   };
 
   _validateHttpResponse(response) {
@@ -84,6 +99,17 @@ export class Kleinanzeigen {
     }
   }
 
+  async _httpGetHeaders(urlSuffix) {
+    try {
+      const response = await this._httpGet(urlSuffix);
+      const data = response.headers;
+
+      return data;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   _getJsonContent(data) {
     let content = null;
 
@@ -106,6 +132,20 @@ export class Kleinanzeigen {
     }
 
     const content = this._getJsonContent(data);
+
+    return content;
+  }
+
+  async _httpGetLoginToken(urlSuffix) {
+    let data = null;
+
+    try {
+      data = await this._httpGetHeaders(urlSuffix)
+    } catch (e) {
+      throw e;
+    }
+
+    const content = data['x-ebayk-token'];
 
     return content;
   }
@@ -179,6 +219,21 @@ export class Kleinanzeigen {
       const ad = content.ad;
 
       return ad;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+
+  async doLogin() {
+    const urlSuffix = `/users/login`;
+
+    try {
+      const content = await this._httpGetLoginToken(urlSuffix);
+      this._token = content;
+      settings.setSync('credentials.token', content);
+
+      return true;
     } catch (e) {
       throw e;
     }
@@ -284,16 +339,6 @@ export class Kleinanzeigen {
       const response = await this._httpPost(urlSuffix, xml);
 
       return response.status === 201;
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  async loginTest() {
-    try {
-      const ads = await this.getAds();
-
-      return ads !== null;
     } catch (e) {
       throw e;
     }

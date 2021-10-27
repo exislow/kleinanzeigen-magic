@@ -20,4 +20,5 @@ export function updateProfile (state, val) {
 
 export function updateToken (state, val) {
   state.token = val;
+  settings.setSync('credentials.token', val);
 }

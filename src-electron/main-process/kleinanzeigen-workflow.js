@@ -2,11 +2,11 @@ import { Kleinanzeigen } from './kleinanzeigen';
 import settings from 'electron-settings';
 
 
-export const loginTest = async () => {
+export const login = async () => {
   const k = new Kleinanzeigen();
 
   try {
-    const result = await k.loginTest();
+    const result = await k.doLogin();
 
     return result;
   } catch (e) {

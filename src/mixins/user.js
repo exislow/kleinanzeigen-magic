@@ -29,6 +29,15 @@ export const user = {
         settings.setSync('credentials.password', val);
       }
     },
+    token: {
+      get () {
+        return this.$store.state.user.token;
+      },
+      set (val) {
+        this.$store.commit('user/updateToken', val);
+        settings.setSync('credentials.token', val);
+      }
+    },
     profile: {
       get () {
         return this.$store.state.user.profile;
