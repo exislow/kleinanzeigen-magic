@@ -14,7 +14,7 @@ yarn
 quasar dev --debug -m electron
 ```
 
-Also see in `doc`.
+Also check the files in folder `./doc`.
 
 ### Lint the files
 ```bash
