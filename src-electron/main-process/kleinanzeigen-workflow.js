@@ -1,5 +1,7 @@
-import { Kleinanzeigen } from './kleinanzeigen';
+import {Kleinanzeigen} from './kleinanzeigen';
 import settings from 'electron-settings';
+import {reUploadImages, xmlBuilderPictureLinks} from './utilities';
+import he from 'he';
 
 
 export const login = async () => {
@@ -92,7 +94,7 @@ export const adTopUp = async (id, price) => {
   let adXmlPost = `<?xml version='1.0' encoding='UTF-8' standalone='yes' ?><ad:ad xmlns:types="http://www.ebayclassifiedsgroup.com/schema/types/v1" xmlns:cat="http://www.ebayclassifiedsgroup.com/schema/category/v1" xmlns:ad="http://www.ebayclassifiedsgroup.com/schema/ad/v1" xmlns:loc="http://www.ebayclassifiedsgroup.com/schema/location/v1" xmlns:attr="http://www.ebayclassifiedsgroup.com/schema/attribute/v1" xmlns:pic="http://www.ebayclassifiedsgroup.com/schema/picture/v1" xmlns:user="http://www.ebayclassifiedsgroup.com/schema/user/v1" xmlns:rate="http://www.ebayclassifiedsgroup.com/schema/rate/v1" xmlns:reply="http://www.ebayclassifiedsgroup.com/schema/reply/v1" xmlns:feed="http://www.ebayclassifiedsgroup.com/schema/feed/v1" locale="en_US" id="0"><ad:email>${settings.getSync('credentials.email')}</ad:email>`;
   const k = new Kleinanzeigen();
   const regexAmount = /amount>(.*)<\/types:amount>/;
-  const substAmounnt = `amount>${price}</types:amount>`;
+  const substAmount = `amount>${price}</types:amount>`;
   const regexTitle = /<ad:title>.*<\/ad:title>/;
   const regexDesc = /<ad:description>.*<\/ad:description>/;
   const regexCat = /<cat:category id="\d+"/;
@@ -103,11 +105,23 @@ export const adTopUp = async (id, price) => {
   const regexPosterType = /<ad:poster-type>.*<\/ad:poster-type>/;
   const regexContactName = /<ad:contact-name>.*<\/ad:contact-name>/;
   const regexAttr = /<attr:attributes>.*<\/attr:attributes>/;
-  const regexPics = /<pic:pictures>.*<\/pic:pictures>/;
+  let ad = null;
+  let xmlPictures = '';
+
+  try {
+    ad = await k.getAd(id);
+  } catch (e) {
+    throw e;
+  }
+
+  if ('pictures' in ad) {
+    const adImageUrls = await reUploadImages(ad.pictures.picture);
+    xmlPictures = xmlBuilderPictureLinks(adImageUrls);
+  }
 
   try {
     const adXml = await k.getAdXml(id);
-    const adXmlPrice = adXml.replace(regexAmount, substAmounnt);
+    const adXmlPrice = adXml.replace(regexAmount, substAmount);
     adXmlPost += adXmlPrice.match(regexTitle);
     adXmlPost += adXmlPrice.match(regexDesc);
     adXmlPost += `${adXmlPrice.match(regexCat)} />`;
@@ -117,15 +131,19 @@ export const adTopUp = async (id, price) => {
     adXmlPost += adXmlPrice.match(regexPosterType);
     adXmlPost += adXmlPrice.match(regexContactName);
     adXmlPost += adXmlPrice.match(regexAttr);
-    adXmlPost += adXmlPrice.match(regexPics);
+    adXmlPost += xmlPictures;
+    // Weird char encoding / decoding magic to comply with XML encoding.
+    adXmlPost = adXmlPost.replace(/&amp;/g, '&');
+    adXmlPost = he.decode(adXmlPost);
+    adXmlPost = adXmlPost.replace(/&/g, '&amp;');
     adXmlPost += '</ad:ad>';
 
     const resultCreate = await k.createAd(adXmlPost);
-    let resultDelete = null;
+    let resultDelete = false;
 
     if (resultCreate === true) {
       resultDelete = await k.deleteAd(id);
-      // TODO: Check if creation was successfull otherwise delete newly created item.
+      // TODO: Check if deletion was successful otherwise delete newly created item.
     }
 
     return resultCreate, resultDelete;
@@ -145,3 +163,4 @@ export const getProfile = async () => {
     throw e;
   }
 };
+

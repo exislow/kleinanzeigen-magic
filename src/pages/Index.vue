@@ -31,6 +31,8 @@ export default {
     }
   },
   mounted() {
+    this.token = null;
+
     this.$q.electron.ipcRenderer.on('m-login', (event, arg) => {
       this.isLogin = arg;
 
@@ -61,7 +63,7 @@ export default {
     },
     showLoading: function() {
       this.$q.loading.show({
-        message: 'Anmeldung läuft. Informationen werden abgefragt...'
+        message: 'Anmeldung läuft. Informationen werden geladen...'
       });
     }
   }

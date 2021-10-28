@@ -21,7 +21,7 @@
                 q-item-section(avatar)
                   q-icon(name="language")
                 q-item-section
-                  q-item-label {{ad.title.value}}
+                  q-item-label {{ heDecode(ad.title.value) }}
               q-item
                 q-item-section(avatar)
                   q-icon(name="error")
@@ -32,7 +32,7 @@
                     q-icon.on-left.on-right(name="star")
                     | {{ ad.count_watch}}
                     q-icon.on-left.on-right(name="event")
-                    | {{ ad['start-date-time'].value.substring(0, 10) }}
+                    | {{ formatStartDateTime(ad['start-date-time']) }}
               q-item
                 q-item-section(avatar)
                 q-item-section
@@ -83,6 +83,7 @@
 import { ek } from 'src/mixins/ek'
 import { user } from 'src/mixins/user'
 import { electronHelper } from 'src/mixins/electronHelper'
+import he from 'he';
 
 export default {
   name: 'PageOverview',
@@ -121,6 +122,15 @@ export default {
     this.$q.electron.ipcRenderer.on('m-ads-delete', (event, arg) => {
       if (arg.success === true) {
         this.ads = arg.data
+      }
+    })
+
+    this.$q.electron.ipcRenderer.on('m-ads-topup', (event, arg) => {
+      if (arg === true) {
+        this.$toasted.success('Die Anzeige wurde erfolgreich nach oben geschoben.');
+        this.getAds();
+      } else {
+        this.$toasted.error('Oops. Da ist etwas schief gelaufen.');
       }
     })
 
@@ -200,6 +210,16 @@ export default {
       const { value: amount } = ad.price.amount
       const currency = ad.price['currency-iso-code'].value['localized-label']
       return `${amount} ${currency}` + priceSuffix
+    },
+    heDecode (str) {
+      return he.decode(str);
+    },
+    formatStartDateTime(adStartDateTime) {
+      if ('value' in adStartDateTime) {
+        return adStartDateTime.value.substring(0, 10);
+      } else {
+        return new Date().toISOString().substring(0, 10);
+      }
     }
   }
 }

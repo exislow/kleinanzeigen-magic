@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { RemoteSystemError, AuthorizationError, RemoteNotFound, AttributeError, AxiosError } from './exceptions';
+import {AttributeError, AuthorizationError, AxiosError, RemoteNotFound, RemoteSystemError} from './exceptions';
 import settings from 'electron-settings';
 import crypto from 'crypto';
 import _ from 'lodash';
 import FormData from 'form-data';
-import { readFileAsync } from './utilities';
+import {readFileAsync} from './utilities';
 
 export class Kleinanzeigen {
   APK_APP_VERSION = '13.4.2';
@@ -12,7 +12,7 @@ export class Kleinanzeigen {
   BASE_URL = 'https://api.ebay-kleinanzeigen.de/api';
   EBAYK_APP = '13a6dde3-935d-4cd8-9992-db8a8c4b6c0f1456515662229';
   BASIC_AUTH_USER = 'android';
-  BASIC_AUTH_PASSWORD =  'TaR60pEttY';
+  BASIC_AUTH_PASSWORD = 'TaR60pEttY';
 
   constructor() {
     try {
@@ -20,7 +20,7 @@ export class Kleinanzeigen {
       this._password = settings.getSync('credentials.password');
       this._token = settings.getSync('credentials.token');
     } catch (e) {
-      throw new AttributeError('Credentials not set. Please provide e-mail address and password.')
+      throw new AttributeError('Credentials not set. Please provide e-mail address and password.');
     }
 
     this._passwordHashed = crypto.createHash('sha1').update(this._password, 'utf8').digest('base64');
@@ -32,7 +32,9 @@ export class Kleinanzeigen {
         username: this.BASIC_AUTH_USER,
         password: this.BASIC_AUTH_PASSWORD
       },
-      validateStatus: function (status) { return true; }
+      validateStatus: function (status) {
+        return true;
+      }
     };
     this._axios = axios.create(axiosConfig);
   }
@@ -45,7 +47,7 @@ export class Kleinanzeigen {
       'X-EBAYK-APP': this.EBAYK_APP,
       'Content-Type': 'application/xml',
       'User-Agent': this.USER_AGENT
-    }
+    };
   };
 
   _generateHeaderPassword() {
@@ -115,7 +117,7 @@ export class Kleinanzeigen {
   _getJsonContent(data) {
     let content = null;
 
-    _.forOwn(data, function(value, key) {
+    _.forOwn(data, function (value, key) {
       if (key.startsWith('{http')) {
         content = data[key].value;
       }
@@ -128,7 +130,7 @@ export class Kleinanzeigen {
     let data = null;
 
     try {
-      data = await this._httpGetData(urlSuffix)
+      data = await this._httpGetData(urlSuffix);
     } catch (e) {
       throw e;
     }
@@ -142,7 +144,7 @@ export class Kleinanzeigen {
     let data = null;
 
     try {
-      data = await this._httpGetHeaders(urlSuffix)
+      data = await this._httpGetHeaders(urlSuffix);
     } catch (e) {
       throw e;
     }
@@ -158,7 +160,7 @@ export class Kleinanzeigen {
       response = await this._axios.put(urlSuffix, data);
     } catch (e) {
       console.log(e);
-      throw AxiosError(e)
+      throw AxiosError(e);
     }
 
     this._validateHttpResponse(response);
@@ -173,7 +175,7 @@ export class Kleinanzeigen {
       response = await this._axios.delete(urlSuffix);
     } catch (e) {
       console.log(e);
-      throw AxiosError(e)
+      throw AxiosError(e);
     }
 
     this._validateHttpResponse(response);
@@ -188,7 +190,7 @@ export class Kleinanzeigen {
       response = await this._axios.post(urlSuffix, data);
     } catch (e) {
       console.log(e);
-      throw AxiosError(e)
+      throw AxiosError(e);
     }
 
     this._validateHttpResponse(response);
@@ -312,7 +314,7 @@ export class Kleinanzeigen {
     let content = null;
 
     try {
-       content = await this._httpGetData(urlSuffix);
+      content = await this._httpGetData(urlSuffix);
     } catch (e) {
       throw e;
     }
@@ -348,7 +350,7 @@ export class Kleinanzeigen {
     try {
       const result = await this._changeAdStatus(id, 'active');
 
-      return result
+      return result;
     } catch (e) {
       throw e;
     }
@@ -358,7 +360,7 @@ export class Kleinanzeigen {
     try {
       const result = await this._changeAdStatus(id, 'paused');
 
-      return result
+      return result;
     } catch (e) {
       throw e;
     }
@@ -392,7 +394,7 @@ export class Kleinanzeigen {
     try {
       const result = await this._httpPostJsonFile('/pictures.json', path);
 
-      return result
+      return result;
     } catch (e) {
       throw e;
     }
