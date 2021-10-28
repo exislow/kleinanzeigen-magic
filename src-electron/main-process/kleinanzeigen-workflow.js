@@ -122,6 +122,12 @@ export const adTopUp = async (id, price) => {
   try {
     const adXml = await k.getAdXml(id);
     const adXmlPrice = adXml.replace(regexAmount, substAmount);
+    let adTitle = adXmlPrice.match(regexTitle);
+    // Weird char encoding / decoding magic to comply with XML encoding.
+    adTitle = adTitle.toString().replace(/&amp;/g, '&');
+    adTitle = he.decode(adTitle);
+    adTitle = adTitle.replace(/&/g, '&amp;');
+    adXmlPost += adTitle;
     adXmlPost += adXmlPrice.match(regexTitle);
     adXmlPost += adXmlPrice.match(regexDesc);
     adXmlPost += `${adXmlPrice.match(regexCat)} />`;
@@ -132,10 +138,6 @@ export const adTopUp = async (id, price) => {
     adXmlPost += adXmlPrice.match(regexContactName);
     adXmlPost += adXmlPrice.match(regexAttr);
     adXmlPost += xmlPictures;
-    // Weird char encoding / decoding magic to comply with XML encoding.
-    adXmlPost = adXmlPost.replace(/&amp;/g, '&');
-    adXmlPost = he.decode(adXmlPost);
-    adXmlPost = adXmlPost.replace(/&/g, '&amp;');
     adXmlPost += '</ad:ad>';
 
     const resultCreate = await k.createAd(adXmlPost);
