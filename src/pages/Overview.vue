@@ -131,6 +131,8 @@ export default {
     })
 
     this.$q.electron.ipcRenderer.on('m-ads-topup', (event, arg) => {
+      this.$q.loading.hide();
+
       if (arg === true) {
         this.$toasted.success('Die Anzeige wurde erfolgreich nach oben geschoben.');
         this.getAds();
@@ -197,9 +199,10 @@ export default {
       const args = {
         id: adId,
         price: price
-      }
-      this.$q.electron.ipcRenderer.send(`r-ads-topup`, args)
-      this.dialogTopUpHide()
+      };
+      this.$q.electron.ipcRenderer.send(`r-ads-topup`, args);
+      this.dialogTopUpHide();
+      this.showLoadingPlsWait();
     },
     formattedAdPrice (ad) {
       const { value: priceType } = ad.price['price-type']
@@ -225,6 +228,11 @@ export default {
       } else {
         return new Date().toISOString().substring(0, 10);
       }
+    },
+    showLoadingPlsWait: function() {
+      this.$q.loading.show({
+        message: 'Ich tue mein Bestes! Bitte warten...'
+      });
     }
   }
 }
