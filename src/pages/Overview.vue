@@ -121,7 +121,12 @@ export default {
 
     this.$q.electron.ipcRenderer.on('m-ads-delete', (event, arg) => {
       if (arg.success === true) {
-        this.ads = arg.data
+        // TODO: instead of `getAds()` fix `arg.data`.
+        this.ads = arg.data;
+        this.$toasted.success('Die Anzeige wurde erfolgreich gelöscht.');
+        this.getAds();
+      } else {
+        this.$toasted.error('Oops. Da ist etwas schief gelaufen.');
       }
     })
 
@@ -158,7 +163,7 @@ export default {
 
     dialogDeleteShow: function (ad) {
       this.confirmDelete.id = ad.id
-      this.confirmDelete.title = ad.title.value
+      this.confirmDelete.title = this.heDecode(ad.title.value)
       this.confirmDelete.show = true
     },
 
