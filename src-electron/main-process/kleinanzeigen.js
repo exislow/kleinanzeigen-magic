@@ -3,10 +3,12 @@ import { RemoteSystemError, AuthorizationError, RemoteNotFound, AttributeError, 
 import settings from 'electron-settings';
 import crypto from 'crypto';
 import _ from 'lodash';
+import FormData from 'form-data';
+import { readFileAsync } from './utilities';
 
 export class Kleinanzeigen {
   APK_APP_VERSION = '13.4.2';
-  USER_AGENT = 'Dalvik/13.4.2';
+  USER_AGENT = 'Dalvik/2.2.0';
   BASE_URL = 'https://api.ebay-kleinanzeigen.de/api';
   EBAYK_APP = '13a6dde3-935d-4cd8-9992-db8a8c4b6c0f1456515662229';
   BASIC_AUTH_USER = 'android';
@@ -194,6 +196,48 @@ export class Kleinanzeigen {
     return response;
   }
 
+  async _httpPostFile(urlSuffix, path) {
+    const data = new FormData();
+    let response = null;
+    let file = null;
+    let config = null;
+
+    try {
+      file = await readFileAsync(path);
+      data.append('file', file, 'image.jpg');
+      config = {
+        headers: data.getHeaders()
+      };
+    } catch (e) {
+      throw e;
+    }
+
+    try {
+      response = await this._axios.post(urlSuffix, data, config);
+    } catch (e) {
+      console.log(e);
+      throw AxiosError(e);
+    }
+
+    this._validateHttpResponse(response);
+
+    return response.data;
+  }
+
+  async _httpPostJsonFile(urlSuffix, path) {
+    let data = null;
+
+    try {
+      data = await this._httpPostFile(urlSuffix, path);
+    } catch (e) {
+      throw e;
+    }
+
+    const content = this._getJsonContent(data);
+
+    return content;
+  }
+
   async _changeAdStatus(id, status) {
     if (['active', 'paused'].indexOf(status) < 0) {
       throw AttributeError(`Unknown requested status: ${status}`);
@@ -339,6 +383,16 @@ export class Kleinanzeigen {
       const response = await this._httpPost(urlSuffix, xml);
 
       return response.status === 201;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async uploadPicture(path) {
+    try {
+      const result = await this._httpPostJsonFile('/pictures.json', path);
+
+      return result
     } catch (e) {
       throw e;
     }
