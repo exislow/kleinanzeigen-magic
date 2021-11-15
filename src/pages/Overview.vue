@@ -205,6 +205,10 @@ export default {
       this.showLoadingPlsWait();
     },
     formattedAdPrice (ad) {
+      if (!('price' in ad)) {
+        return 'zu verschenken'
+      }
+
       const { value: priceType } = ad.price['price-type']
       const isFreeItem = priceType === 'FREE'
 
