@@ -71,7 +71,7 @@
         q-card-section
           .text-h6 Preis ändern?
         q-card-section.q-pt-none
-          q-input(dense, v-model="confirmTopUp.price", autofocus, @keyup.enter="adsTopUp(confirmTopUp.id, confirmTopUp.price)")
+          q-input(dense, v-model="confirmTopUp.price", autofocus, :disable='!confirmTopUp.editable', @keyup.enter="adsTopUp(confirmTopUp.id, confirmTopUp.price)")
             template(v-slot:prepend)
               q-icon(name="euro_symbol")
         q-card-actions.text-primary(align="right")
@@ -99,7 +99,8 @@ export default {
       confirmTopUp: {
         show: false,
         id: null,
-        price: null
+        price: null,
+        editable: true
       },
       adsLoading: false,
     }
@@ -185,7 +186,13 @@ export default {
 
     dialogTopUpShow (ad) {
       this.confirmTopUp.id = ad.id
-      this.confirmTopUp.price = ad.price.amount.value
+      if ('price' in ad) {
+        this.confirmTopUp.price = ad.price.amount.value
+        this.confirmTopUp.editable = true
+      } else {
+        this.confirmTopUp.price = 0
+        this.confirmTopUp.editable = false
+      }
       this.confirmTopUp.show = true
     },
 
@@ -193,6 +200,7 @@ export default {
       this.confirmTopUp.show = false
       this.confirmTopUp.id = null
       this.confirmTopUp.price = null
+      this.confirmTopUp.editable = true
     },
 
     adsTopUp: function (adId, price) {
