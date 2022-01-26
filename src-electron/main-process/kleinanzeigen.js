@@ -258,7 +258,7 @@ export class Kleinanzeigen {
   }
 
   async getAds() {
-    const urlSuffix = `/users/${this._email}/ads.json`;
+    const urlSuffix = `/users/${this._email}/ads.json?size=9999`;
 
     try {
       const content = await this._httpGetJsonContent(urlSuffix);
