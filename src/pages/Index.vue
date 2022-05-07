@@ -52,6 +52,11 @@ export default {
         this.$router.push({ name: 'overview' });
       }
     });
+
+    // When credentials already set from a previous session try automatically to login.
+    if (this.email && this.password) {
+      this.login();
+    }
   },
   methods: {
     login: function() {
