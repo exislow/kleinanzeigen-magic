@@ -64,7 +64,7 @@ ipcMain.on('r-login', async (event, args) => {
 
 ipcMain.on('r-ads-topup', async (event, args) => {
   try {
-    const status = await adTopUp(args.id, args.price);
+    const status = await adTopUp(args.id, args.price, args.title);
 
     event.reply('m-ads-topup', status);
   } catch (e) {
