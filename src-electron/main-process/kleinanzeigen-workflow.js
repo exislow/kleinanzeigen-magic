@@ -91,7 +91,7 @@ export const adDelete = async (id) => {
 };
 
 export const adTopUp = async (id, price, title) => {
-  let adXmlPost = `<?xml version='1.0' encoding='UTF-8' standalone='yes' ?><ad:ad xmlns:types="http://www.ebayclassifiedsgroup.com/schema/types/v1" xmlns:cat="http://www.ebayclassifiedsgroup.com/schema/category/v1" xmlns:ad="http://www.ebayclassifiedsgroup.com/schema/ad/v1" xmlns:loc="http://www.ebayclassifiedsgroup.com/schema/location/v1" xmlns:attr="http://www.ebayclassifiedsgroup.com/schema/attribute/v1" xmlns:pic="http://www.ebayclassifiedsgroup.com/schema/picture/v1" xmlns:user="http://www.ebayclassifiedsgroup.com/schema/user/v1" xmlns:rate="http://www.ebayclassifiedsgroup.com/schema/rate/v1" xmlns:reply="http://www.ebayclassifiedsgroup.com/schema/reply/v1" xmlns:feed="http://www.ebayclassifiedsgroup.com/schema/feed/v1" locale="en_US" id="0"><ad:email>${settings.getSync('credentials.email')}</ad:email>`;
+  let adXmlPost = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ad:ad id="${id}" locale="de_DE" version="1.16" xmlns:ad="http://www.ebayclassifiedsgroup.com/schema/ad/v1" xmlns:attr="http://www.ebayclassifiedsgroup.com/schema/attribute/v1" xmlns:cat="http://www.ebayclassifiedsgroup.com/schema/category/v1" xmlns:counter="http://www.ebayclassifiedsgroup.com/schema/counter/v1" xmlns:dfp="http://www.ebayclassifiedsgroup.com/schema/dfp/v1" xmlns:displayoption="http://www.ebayclassifiedsgroup.com/schema/displayoption/v1" xmlns:document="http://www.ebayclassifiedsgroup.com/schema/document/v1" xmlns:feat="http://www.ebayclassifiedsgroup.com/schema/feature/v1" xmlns:flag="http://www.ebayclassifiedsgroup.com/schema/flag/v1" xmlns:loc="http://www.ebayclassifiedsgroup.com/schema/location/v1" xmlns:media="http://www.ebayclassifiedsgroup.com/schema/media/v1" xmlns:ns6="http://www.ebayclassifiedsgroup.com/schema/shipping/v1" xmlns:partnership="http://www.ebayclassifiedsgroup.com/schema/partnership/v1" xmlns:payment="http://www.ebayclassifiedsgroup.com/schema/payment/v1" xmlns:pic="http://www.ebayclassifiedsgroup.com/schema/picture/v1" xmlns:reply="http://www.ebayclassifiedsgroup.com/schema/reply/v1" xmlns:stat="http://www.ebayclassifiedsgroup.com/schema/stat/v1" xmlns:sug="http://www.ebayclassifiedsgroup.com/schema/suggestion/v1" xmlns:tracking="http://www.ebayclassifiedsgroup.com/schema/tracking/v1" xmlns:types="http://www.ebayclassifiedsgroup.com/schema/types/v1" ><ad:email>${settings.getSync('credentials.email')}</ad:email>`;
   const k = new Kleinanzeigen();
   const regexAmount = /amount>(.*)<\/types:amount>/;
   const substAmount = `amount>${price}</types:amount>`;
@@ -107,6 +107,7 @@ export const adTopUp = async (id, price, title) => {
   const regexPosterType = /<ad:poster-type>.*<\/ad:poster-type>/;
   const regexContactName = /<ad:contact-name>.*<\/ad:contact-name>/;
   const regexAttr = /<attr:attributes>.*<\/attr:attributes>/;
+  const regexShipping = /<ns6:shipping-options>.*<\/ns6:shipping-options>/;
   let ad = null;
   let xmlPictures = '';
 
@@ -139,6 +140,7 @@ export const adTopUp = async (id, price, title) => {
     adXmlPost += adXmlPrice.match(regexAdType);
     adXmlPost += adXmlPrice.match(regexPosterType);
     adXmlPost += adXmlPrice.match(regexContactName);
+    adXmlPost += adXmlPrice.match(regexShipping);
     adXmlPost += adXmlPrice.match(regexAttr);
     adXmlPost += xmlPictures;
     adXmlPost += '</ad:ad>';
