@@ -6,6 +6,7 @@ import {join} from 'path';
 import {Kleinanzeigen} from './kleinanzeigen';
 import {tmpdir} from 'os';
 import builder from 'xmlbuilder';
+import sanitize from 'sanitize-filename';
 
 export const generateExceptionStr = (exc) => {
   return `${exc.name}: ${exc.message}`;
@@ -68,7 +69,7 @@ export const reUploadImages = async function (adPictures) {
       return o.rel === 'XXL';
     }).href;
     const imgUrlSplit = imgUrl.split('/');
-    const imgNameNew = `${imgUrlSplit[imgUrlSplit.length - 2]}_${imgUrlSplit[imgUrlSplit.length - 1]}`;
+    const imgNameNew = sanitize(`${imgUrlSplit[imgUrlSplit.length - 2]}_${imgUrlSplit[imgUrlSplit.length - 1]}`);
     const pathDest = join(tmpDirPath, imgNameNew);
 
     try {
