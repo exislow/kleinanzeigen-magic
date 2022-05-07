@@ -96,9 +96,9 @@ export const adTopUp = async (id, price, title) => {
   const regexAmount = /amount>(.*)<\/types:amount>/;
   const substAmount = `amount>${price}</types:amount>`;
   const regexSubstTitle = /title>(.*)<\/ad:title>/;
-  const substTitle = `title>${title}</ad:title>`;
+  const substTitle = `title><![CDATA[${title}]]></ad:title>`;
   const regexTitle = /<ad:title>.*<\/ad:title>/;
-  const regexDesc = /<ad:description>.*<\/ad:description>/;
+  const regexDesc = /<ad:description>(.*)<\/ad:description>/;
   const regexCat = /<cat:category id="\d+"/;
   const regexLoc = /<loc:locations><loc:location id="\d+"/;
   const regexPriceType = /<types:price-type>.*<\/types:price-type>/;
@@ -127,13 +127,13 @@ export const adTopUp = async (id, price, title) => {
     const adXmlTitle = adXml.replace(regexSubstTitle, substTitle);
     const adXmlPrice = adXmlTitle.replace(regexAmount, substAmount);
     let adTitle = adXmlPrice.match(regexTitle);
-    // Weird char encoding / decoding magic to comply with XML encoding.
-    adTitle = adTitle.toString().replace(/&amp;/g, '&');
-    adTitle = he.decode(adTitle);
-    adTitle = adTitle.replace(/&/g, '&amp;');
     adXmlPost += adTitle;
     adXmlPost += adXmlPrice.match(regexTitle);
-    adXmlPost += adXmlPrice.match(regexDesc);
+    // Weird library behavior: Until proper decode you need to decode the string twice.
+    let adXmlDescTmp = adXmlPrice.match(regexDesc)[1];
+    let adXmlDescTmpDec = he.decode(adXmlDescTmp);
+    let adXmlDescTmpDecDec = he.decode(adXmlDescTmpDec);
+    adXmlPost += `<ad:description><![CDATA[${adXmlDescTmpDecDec}]]></ad:description>`;
     adXmlPost += `${adXmlPrice.match(regexCat)} />`;
     adXmlPost += `${adXmlPrice.match(regexLoc)} /></loc:locations><ad:ad-address/>`;
     adXmlPost += `<ad:price>${adXmlPrice.match(regexPriceType)}${adXmlPrice.match(regexPriceAmount)}</ad:price>`;
