@@ -69,27 +69,30 @@
     q-dialog(v-model="confirmTopUp.show" persistent)
       q-card(style="min-width: 350px")
         q-card-section
-          .text-h6 Preis ändern?
+          .text-h6 Änderungen?
         q-card-section.q-pt-none
-          q-input(dense, v-model="confirmTopUp.price", autofocus, :disable='!confirmTopUp.editable', @keyup.enter="adsTopUp(confirmTopUp.id, confirmTopUp.price)")
+          q-input(dense, v-model="confirmTopUp.title", autofocus, @keyup.enter="adsTopUp(confirmTopUp.id, confirmTopUp.price, confirmTopUp.title)")
+            template(v-slot:prepend)
+              q-icon(name="language")
+          q-input(dense, v-model="confirmTopUp.price", autofocus, :disable='!confirmTopUp.editablePrice', @keyup.enter="adsTopUp(confirmTopUp.id, confirmTopUp.price, confirmTopUp.title)")
             template(v-slot:prepend)
               q-icon(name="euro_symbol")
         q-card-actions.text-primary(align="right")
           q-btn(flat, label="Abbrechen", color="primary", v-close-popup, @click="dialogTopUpHide")
-          q-btn(flat, label="Top Up", color="positive", v-close-popup, @click="adsTopUp(confirmTopUp.id, confirmTopUp.price)")
+          q-btn(flat, label="Top Up", color="positive", v-close-popup, @click="adsTopUp(confirmTopUp.id, confirmTopUp.price, confirmTopUp.title)")
 </template>
 
 <script>
-import { ek } from 'src/mixins/ek'
-import { user } from 'src/mixins/user'
-import { electronHelper } from 'src/mixins/electronHelper'
+import {ek} from 'src/mixins/ek';
+import {user} from 'src/mixins/user';
+import {electronHelper} from 'src/mixins/electronHelper';
 import he from 'he';
 
 export default {
   name: 'PageOverview',
   mixins: [ek, user, electronHelper],
 
-  data () {
+  data() {
     return {
       confirmDelete: {
         show: false,
@@ -100,25 +103,26 @@ export default {
         show: false,
         id: null,
         price: null,
+        title: null,
         editable: true
       },
-      adsLoading: false,
-    }
+      adsLoading: false
+    };
   },
 
   mounted: function () {
     this.$q.electron.ipcRenderer.on('m-get-ads', (event, arg) => {
-      this.ads = arg
-      this.adsLoading = false
-    })
+      this.ads = arg;
+      this.adsLoading = false;
+    });
 
     this.$q.electron.ipcRenderer.on('m-ad-pause', (event, arg) => {
-      this.getAds()
-    })
+      this.getAds();
+    });
 
     this.$q.electron.ipcRenderer.on('m-ad-resume', (event, arg) => {
-      this.getAds()
-    })
+      this.getAds();
+    });
 
     this.$q.electron.ipcRenderer.on('m-ads-delete', (event, arg) => {
       if (arg.success === true) {
@@ -129,7 +133,7 @@ export default {
       } else {
         this.$toasted.error('Oops. Da ist etwas schief gelaufen.');
       }
-    })
+    });
 
     this.$q.electron.ipcRenderer.on('m-ads-topup', (event, arg) => {
       this.$q.loading.hide();
@@ -140,98 +144,103 @@ export default {
       } else {
         this.$toasted.error('Oops. Da ist etwas schief gelaufen.');
       }
-    })
+    });
 
     if (this.ads != undefined) {
       if (this.ads.length === 0) {
-        this.getAds()
+        this.getAds();
       }
     } else {
-      this.getAds()
+      this.getAds();
     }
   },
   methods: {
     getAds: async function () {
-      this.adsLoading = true
-      this.ads = []
-      this.$q.electron.ipcRenderer.send('r-get-ads')
+      this.adsLoading = true;
+      this.ads = [];
+      this.$q.electron.ipcRenderer.send('r-get-ads');
     },
 
     adPauseResume: function (mode, adId) {
       const args = {
         id: adId
-      }
-      this.$q.electron.ipcRenderer.send(`r-ad-${mode}`, args)
+      };
+      this.$q.electron.ipcRenderer.send(`r-ad-${mode}`, args);
     },
 
     dialogDeleteShow: function (ad) {
-      this.confirmDelete.id = ad.id
-      this.confirmDelete.title = this.heDecode(ad.title.value)
-      this.confirmDelete.show = true
+      this.confirmDelete.id = ad.id;
+      this.confirmDelete.title = this.heDecode(ad.title.value);
+      this.confirmDelete.show = true;
     },
 
-    dialogDeleteHide () {
-      this.confirmDelete.show = false
-      this.confirmDelete.id = null
-      this.confirmDelete.title = null
+    dialogDeleteHide() {
+      this.confirmDelete.show = false;
+      this.confirmDelete.id = null;
+      this.confirmDelete.title = null;
     },
 
     adsDelete: function (adId) {
       const args = {
         id: adId
-      }
-      this.$q.electron.ipcRenderer.send(`r-ads-delete`, args)
-      this.dialogDeleteHide()
+      };
+      this.$q.electron.ipcRenderer.send(`r-ads-delete`, args);
+      this.dialogDeleteHide();
     },
 
-    dialogTopUpShow (ad) {
-      this.confirmTopUp.id = ad.id
+    dialogTopUpShow(ad) {
+      this.confirmTopUp.id = ad.id;
       if ('price' in ad) {
-        this.confirmTopUp.price = ad.price.amount.value
-        this.confirmTopUp.editable = true
+        this.confirmTopUp.price = ad.price.amount.value;
+        this.confirmTopUp.editablePrice = true;
       } else {
-        this.confirmTopUp.price = 0
-        this.confirmTopUp.editable = false
+        this.confirmTopUp.price = 0;
+        this.confirmTopUp.editablePrice = false;
       }
-      this.confirmTopUp.show = true
+
+      this.confirmTopUp.title = this.heDecode(ad.title.value);
+
+      this.confirmTopUp.show = true;
     },
 
-    dialogTopUpHide () {
-      this.confirmTopUp.show = false
-      this.confirmTopUp.id = null
-      this.confirmTopUp.price = null
-      this.confirmTopUp.editable = true
+    dialogTopUpHide() {
+      this.confirmTopUp.show = false;
+      this.confirmTopUp.id = null;
+      this.confirmTopUp.title = null;
+      this.confirmTopUp.price = null;
+      this.confirmTopUp.editablePrice = true;
     },
 
-    adsTopUp: function (adId, price) {
+    adsTopUp: function (adId, price, title) {
       const args = {
         id: adId,
+        title: title,
         price: price
       };
       this.$q.electron.ipcRenderer.send(`r-ads-topup`, args);
       this.dialogTopUpHide();
       this.showLoadingPlsWait();
     },
-    formattedAdPrice (ad) {
+    formattedAdPrice(ad) {
       if (!('price' in ad)) {
-        return 'zu verschenken'
+        return 'zu verschenken';
       }
 
-      const { value: priceType } = ad.price['price-type']
-      const isFreeItem = priceType === 'FREE'
+      const {value: priceType} = ad.price['price-type'];
+      const isFreeItem = priceType === 'FREE';
 
       if (isFreeItem) {
-        return 'zu verschenken'
+        return 'zu verschenken';
       }
 
-      const isNegotiable = priceType === 'PLEASE_CONTACT'
-      const priceSuffix = isNegotiable ? ' (VB)' : ''
+      const isNegotiable = priceType === 'PLEASE_CONTACT';
+      const priceSuffix = isNegotiable ? ' (VB)' : '';
 
-      const { value: amount } = ad.price.amount
-      const currency = ad.price['currency-iso-code'].value['localized-label']
-      return `${amount} ${currency}` + priceSuffix
+      const {value: amount} = ad.price.amount;
+      const currency = ad.price['currency-iso-code'].value['localized-label'];
+      return `${amount} ${currency}` + priceSuffix;
     },
-    heDecode (str) {
+    heDecode(str) {
       return he.decode(str);
     },
     formatStartDateTime(adStartDateTime) {
@@ -241,13 +250,13 @@ export default {
         return new Date().toISOString().substring(0, 10);
       }
     },
-    showLoadingPlsWait: function() {
+    showLoadingPlsWait: function () {
       this.$q.loading.show({
         message: 'Ich tue mein Bestes! Bitte warten...'
       });
     }
   }
-}
+};
 
 </script>
 

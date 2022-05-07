@@ -90,11 +90,13 @@ export const adDelete = async (id) => {
   }
 };
 
-export const adTopUp = async (id, price) => {
+export const adTopUp = async (id, price, title) => {
   let adXmlPost = `<?xml version='1.0' encoding='UTF-8' standalone='yes' ?><ad:ad xmlns:types="http://www.ebayclassifiedsgroup.com/schema/types/v1" xmlns:cat="http://www.ebayclassifiedsgroup.com/schema/category/v1" xmlns:ad="http://www.ebayclassifiedsgroup.com/schema/ad/v1" xmlns:loc="http://www.ebayclassifiedsgroup.com/schema/location/v1" xmlns:attr="http://www.ebayclassifiedsgroup.com/schema/attribute/v1" xmlns:pic="http://www.ebayclassifiedsgroup.com/schema/picture/v1" xmlns:user="http://www.ebayclassifiedsgroup.com/schema/user/v1" xmlns:rate="http://www.ebayclassifiedsgroup.com/schema/rate/v1" xmlns:reply="http://www.ebayclassifiedsgroup.com/schema/reply/v1" xmlns:feed="http://www.ebayclassifiedsgroup.com/schema/feed/v1" locale="en_US" id="0"><ad:email>${settings.getSync('credentials.email')}</ad:email>`;
   const k = new Kleinanzeigen();
   const regexAmount = /amount>(.*)<\/types:amount>/;
   const substAmount = `amount>${price}</types:amount>`;
+  const regexSubstTitle = /title>(.*)<\/ad:title>/;
+  const substTitle = `title>${title}</ad:title>`;
   const regexTitle = /<ad:title>.*<\/ad:title>/;
   const regexDesc = /<ad:description>.*<\/ad:description>/;
   const regexCat = /<cat:category id="\d+"/;
@@ -121,7 +123,8 @@ export const adTopUp = async (id, price) => {
 
   try {
     const adXml = await k.getAdXml(id);
-    const adXmlPrice = adXml.replace(regexAmount, substAmount);
+    const adXmlTitle = adXml.replace(regexSubstTitle, substTitle);
+    const adXmlPrice = adXmlTitle.replace(regexAmount, substAmount);
     let adTitle = adXmlPrice.match(regexTitle);
     // Weird char encoding / decoding magic to comply with XML encoding.
     adTitle = adTitle.toString().replace(/&amp;/g, '&');
