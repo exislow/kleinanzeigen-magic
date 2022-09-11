@@ -108,6 +108,8 @@ export const adTopUp = async (id, price, title) => {
   const regexContactName = /<ad:contact-name>.*<\/ad:contact-name>/;
   const regexAttr = /<attr:attributes>.*<\/attr:attributes>/;
   const regexShipping = /<ns6:shipping-options>.*<\/ns6:shipping-options>/;
+  const regexImprint = /<ad:imprint>.*<\/ad:imprint>/;
+  const regexPhone = /<ad:phone>.*<\/ad:phone>/;
   let ad = null;
   let xmlPictures = '';
 
@@ -129,7 +131,7 @@ export const adTopUp = async (id, price, title) => {
     let adTitle = adXmlPrice.match(regexTitle);
     adXmlPost += adTitle;
     adXmlPost += adXmlPrice.match(regexTitle);
-    // Weird library behavior: Until proper decode you need to decode the string twice.
+    // Weird library behavior: To decode properly you need to decode the string twice.
     let adXmlDescTmp = adXmlPrice.match(regexDesc)[1];
     let adXmlDescTmpDec = he.decode(adXmlDescTmp);
     let adXmlDescTmpDecDec = he.decode(adXmlDescTmpDec);
@@ -142,6 +144,19 @@ export const adTopUp = async (id, price, title) => {
     adXmlPost += adXmlPrice.match(regexContactName);
     adXmlPost += adXmlPrice.match(regexShipping);
     adXmlPost += adXmlPrice.match(regexAttr);
+
+    // Check if imprint stuff is available
+    const resImprint = adXmlPrice.match(regexImprint);
+    const resPhone = adXmlPrice.match(regexPhone);
+
+    if (resImprint) {
+      adXmlPost += resImprint;
+    }
+
+    if (resPhone) {
+      adXmlPost += resPhone;
+    }
+
     adXmlPost += xmlPictures;
     adXmlPost += '</ad:ad>';
 

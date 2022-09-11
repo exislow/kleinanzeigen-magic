@@ -5,6 +5,21 @@
         q-btn-group(spread)
           q-btn(@click="openExternal('https://www.ebay-kleinanzeigen.de/')", icon="language", label="Kleinanzeigen Portal")
           q-btn(@click="getAds()", icon="refresh", label="Anzeigen")
+    .row.q-gutter-y-sm
+      .col
+        q-banner.bg-red.text-black
+          template(v-slot:avatar)
+            q-icon(name="announcement")
+          | This app is still a BETA. Please note that bugs may occur which may result in unrecoverable or incorrect displayed ads.
+          | Use it at your own risk!
+    .row.q-gutter-y-sm(v-if="!allowTopUp")
+      .col
+        q-banner.bg-orange.text-black
+          template(v-slot:avatar)
+            q-icon(name="warning")
+          | You have created / topped-up more then {{ checkAllowTopUpMaxAds }} ads in the past {{ checkAllowTopUpDays }} days.
+          | According to Kleinanzeigen you are not allowed to create more than {{ checkAllowTopUpMaxAds + 1 }} ads in this time period.
+          | The top-up function is therefore suspended until you fall below the limit value again.
     .row.q-pa-md.q-gutter-y-sm(v-if="!adsLoading", v-for="ad in ads", :key="ad.id")
       .col-12
         q-card
@@ -39,7 +54,7 @@
                   q-btn-group(outline)
                     q-btn(flat, :icon="ad['ad-status'].value == 'ACTIVE' ? 'public_off' : 'public'", @click="adPauseResume(ad['ad-status'].value == 'ACTIVE' ? 'pause' : 'resume', ad.id)")
                       q-tooltip Anzeige deaktivieren.
-                    q-btn(outline, color="green", @click="dialogTopUpShow(ad)")
+                    q-btn(outline, color="green", @click="dialogTopUpShow(ad)", :disable="!allowTopUp")
                       q-icon.rotate-270(name="double_arrow")
                       q-tooltip Anzeige gratis nach oben schieben.
                     q-btn(flat, color="red", icon="delete_forever", @click="dialogDeleteShow(ad)")
@@ -106,13 +121,20 @@ export default {
         title: null,
         editable: true
       },
-      adsLoading: false
+      adsLoading: false,
+      allowTopUp: true,
+      checkAllowTopUpDays: 30,
+      checkAllowTopUpMaxAds: 49,
+      dayInMs: 86400000
     };
   },
 
   mounted: function () {
     this.$q.electron.ipcRenderer.on('m-get-ads', (event, arg) => {
       this.ads = arg;
+
+      this.checkAllowTopUp();
+
       this.adsLoading = false;
     });
 
@@ -254,6 +276,31 @@ export default {
       this.$q.loading.show({
         message: 'Ich tue mein Bestes! Bitte warten...'
       });
+    },
+    checkAllowTopUp: function () {
+      const adsInTimeScope = this.countNewAdsInPastDays(this.ads, this.checkAllowTopUpDays);
+
+      if (adsInTimeScope > this.checkAllowTopUpMaxAds) {
+        this.allowTopUp = false;
+      } else {
+        this.allowTopUp = true
+      }
+    },
+    countNewAdsInPastDays: function (ads, daysMax) {
+      const now = new Date();
+      let adsInTimeScope = 0;
+
+      for (let adItem of ads) {
+        const then = new Date(adItem['start-date-time']['value']);
+        const msBetweenDates = Math.abs(then.getTime() - now.getTime());
+        const daysBetweenDates = msBetweenDates / this.dayInMs;
+
+        if (daysBetweenDates < 30) {
+          adsInTimeScope++;
+        }
+      }
+
+      return adsInTimeScope;
     }
   }
 };
