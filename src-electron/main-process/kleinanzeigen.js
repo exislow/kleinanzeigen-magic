@@ -9,7 +9,7 @@ import {readFileAsync} from './utilities';
 export class Kleinanzeigen {
   APK_APP_VERSION = '13.4.2';
   USER_AGENT = 'Dalvik/2.2.0';
-  BASE_URL = 'https://api.ebay-kleinanzeigen.de/api';
+  BASE_URL = 'https://api.kleinanzeigen.de/api';
   EBAYK_APP = '13a6dde3-935d-4cd8-9992-db8a8c4b6c0f1456515662229';
   BASIC_AUTH_USER = 'android';
   BASIC_AUTH_PASSWORD = 'TaR60pEttY';
