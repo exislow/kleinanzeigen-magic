@@ -1,4 +1,13 @@
 # Kleinanzeigen Magic
+
+**Warning**
+
+**This is app is currently not working. If you will try to login your account gets banned by Kleinanzeigen.**
+
+See https://github.com/exislow/kleinanzeigen-magic/issues/43
+
+**Warning**
+
 The Kleinanzeigen Magic App helps you to speed up certain workflows at [eBay Kleinanzeigen](https://www.ebay-kleinanzeigen.de/) for free! For instance, it is possible to push your ads to the very top of the search results with one click.
 
 You can download a compiled release of this app [here](https://github.com/exislow/kleinanzeigen-magic/releases).
